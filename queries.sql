@@ -53,16 +53,12 @@ BEGIN;
 -- How many animals are there?
 SELECT count(*) FROM animals;
 -- How many animals have never tried to escape?
-SELECT count(*) FROM animals WHERE escape_attempts > 0;
+SELECT count(*) FROM animals WHERE escape_attempts = 0;
 -- What is the average weight of animals?
 SELECT AVG(weight_kg) FROM animals;
 -- Who escapes the most, neutered or not neutered animals?
-SELECT name FROM animals WHERE escape_attempts = (SELECT MAX(escape_attempts) FROM animals);
+SELECT neutered,MAX(escape_attempts) FROM animals GROUP BY neutered;
 -- What is the minimum and maximum weight of each type of animal?
-SELECT MAX(weight_kg) FROM animals WHERE species = 'digimon';
-SELECT MAX(weight_kg) FROM animals WHERE species = 'pokemon';
-SELECT MIN(weight_kg) FROM animals WHERE species = 'pokemon';
-SELECT MIN(weight_kg) FROM animals WHERE species = 'digimon';
+SELECT species, MAX(weight_kg), MIN(weight_kg) FROM animals GROUP BY species;
 -- What is the average number of escape attempts per animal type of those born between 1990 and 2000?
-SELECT AVG(escape_attempts) FROM animals WHERE date_of_birth BETWEEN '1990-12-31' AND '2000-12-31' AND species = 'digimon';
-SELECT AVG(escape_attempts) FROM animals WHERE date_of_birth BETWEEN '1990-12-31' AND '2000-12-31' AND species = 'pokemon';
+SELECT species, AVG(escape_attempts) FROM animals WHERE date_of_birth BETWEEN '1990-12-31' AND '2000-12-31' GROUP BY species;
