@@ -2,4 +2,4 @@
 
 CREATE DATABASE vet_clinic ;
 
-CREATE TABLE animals(id INT, name TEXT, date_of_birth DATE, escape_attempts INTEGER, neutered BOOLEAN, weight_kg DECIMAL);
+CREATE TABLE animals(id BIGSERIAL NOT NULL PRIMARY KEY, name VARCHAR UNIQUE NOT NULL, date_of_birth DATE, escape_attempts INTEGER, neutered BOOLEAN, weight_kg DECIMAL);
