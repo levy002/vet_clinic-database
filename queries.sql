@@ -16,3 +16,53 @@ select * from animals where neutered =true;
 select * from animals where name!='Gabumon' ;
 -- Find all animals with a weight between 10.4kg and 17.3kg (including the animals with the weights that equals precisely 10.4kg or 17.3kg)
 select * from animals where weight_kg>=10.4 AND weight_kg<=17.3;
+
+-- starting a transaction and update animal table by setting the species column to unspecified and rollback.
+BEGIN;
+UPDATE animals SET species = 'unspecified';
+ROLLBACK;
+
+-- Update the animals table by setting the species column to digimon for all animals that have a name ending in mon.
+BEGIN;
+UPDATE animals SET species = 'digimon' WHERE name LIKE '%mon';
+-- Update the animals table by setting the species column to pokemon for all animals that don't have species already set.
+UPDATE animals SET species = 'digimon' WHERE species = '';
+-- Commit the transaction.
+COMMIT;
+-- Inside a transaction delete all records in the animals table, then roll back the transaction.
+BEGIN;
+DELETE FROM animals;
+ROLLBACK;
+
+-- STARTNG A TRANSACTION:
+BEGIN;
+ -- Delete all animals born after Jan 1st, 2022.
+  DELETE FROM animals WHERE date_of_birth > '2022-01-01';
+ -- Creating a savepoint for the transaction.
+ SAVEPOINT savepoint_1;
+ -- Update all animals' weight to be their weight multiplied by -1.
+ UPDATE animals SET weight_kg = weight_kg * -1;
+ -- Rollback to the savepoint
+ ROLLBACK TO SAVEPOINT savepoint_1;
+ -- Update all animals' weights that are negative to be their weight multiplied by -1.
+ UPDATE animals SET weight_kg = weight_kg * -1 WHERE weight_kg < 1;
+ -- Commit transaction
+ COMMIT;
+
+
+-- How many animals are there?
+SELECT count(*) FROM animals;
+-- How many animals have never tried to escape?
+SELECT count(*) FROM animals WHERE escape_attempts > 0;
+-- What is the average weight of animals?
+SELECT AVG(weight_kg) FROM animals;
+-- Who escapes the most, neutered or not neutered animals?
+SELECT name FROM animals WHERE escape_attempts = (SELECT MAX(escape_attempts) FROM animals);
+-- What is the minimum and maximum weight of each type of animal?
+SELECT MAX(weight_kg) FROM animals WHERE species = 'digimon';
+SELECT MAX(weight_kg) FROM animals WHERE species = 'pokemon';
+SELECT MIN(weight_kg) FROM animals WHERE species = 'pokemon';
+SELECT MIN(weight_kg) FROM animals WHERE species = 'digimon';
+-- What is the average number of escape attempts per animal type of those born between 1990 and 2000?
+SELECT AVG(escape_attempts) FROM animals WHERE date_of_birth BETWEEN '1990-12-31' AND '2000-12-31' AND species = 'digimon';
+SELECT AVG(escape_attempts) FROM animals WHERE date_of_birth BETWEEN '1990-12-31' AND '2000-12-31' AND species = 'pokemon';
